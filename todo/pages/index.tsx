@@ -1,17 +1,31 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-
-function strikethrough(event) {
-  console.log(event);
-  let doneClassName = "ml-2 hover:cursor-pointer line-through text-gray-600";
-  if (event.target.className == doneClassName) {
-    event.target.className = "ml-2 hover:cursor-pointer";
-  } else {
-    event.target.className = doneClassName;
-  }
-}
+import React, {useState, useEffect} from 'react'
 
 export default function Home() {
+
+  let [todos, setTodos] = useState([]);
+
+  const clickTodo = event => {
+    let doneClassName = "hover:cursor-pointer line-through text-gray-600";
+    if (event.target.className == doneClassName) {
+      event.target.className = "hover:cursor-pointer";
+    } else {
+      event.target.className = doneClassName;
+    }
+  }
+
+  const handleKeyDown = event => {
+    if (event.key === 'Enter') {
+      const newTodo = {
+        "id": todos.length+1,
+        "task": event.target.value,
+      }
+      setTodos([...todos, newTodo])
+      event.target.value = ""
+    }
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -27,14 +41,17 @@ export default function Home() {
             <h1 className={styles.title}>todo</h1>
           </div>
 
-          <div>
-              <label onClick={strikethrough} className="ml-2 hover:cursor-pointer">Default checkbox</label>
+          {todos.map(todo => (
+            <div key={todo.id}>
+              <label onClick={clickTodo} className="hover:cursor-pointer">{todo.task}</label>
           </div>
+          ))}
           <div>
-              <label className="ml-2 line-through">Default checkbox</label>
-          </div>
-          <div>
-              <input type="text" className="bg-transparent border-b-2 focus:outline-none"></input>
+              <input
+                type="text"
+                className="bg-transparent border-b-2 focus:outline-none"
+                onKeyDown={handleKeyDown}
+              />
           </div>
         </div>
 
